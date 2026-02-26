@@ -13,9 +13,12 @@ t0 = time.time()
 
 screen = [600,400] # dimensões da tela
 fps = 1/60
-gap = 120 # espaço (vertical) entre os canos
+gap = 125 # espaço (vertical) entre os canos
 canvas = tk.Canvas(root,width=600,height=400,background='black')
 canvas.pack()
+
+score = 0
+score_txt = canvas.create_text(300,10,text=f"SCORE: {score}",fill="white")
 
 class rect():
     def __init__(self,x,y,w,h):
@@ -119,14 +122,6 @@ pipes = {
     ]
     }
 
-def input_manager(event):
-    global player
-    global fps
-    if event.keycode == 32:
-        player['speed'][1] = -5
-root.bind('<Key>',input_manager)
-
-
 def pipe_setup(index):
     global pipes, gap
     pipes['pos'][index][1] = random.randint(0,400-gap)
@@ -136,12 +131,19 @@ def pipe_setup(index):
     pipes['rect'][index][0].y = pipes['pos'][index][1] - pipes['rect'][index][0].h
     pipes['rect'][index][1].y = pipes['pos'][index][1] + gap
 
+def death():
+    global running, score
+    canvas.create_text(30,30,text="MORREU :(",fill="red")
+    running = False
+    score = 0
+
 def game_loop():
-    global root, canvas, t0, running, player, screen, pipes
+    global root, canvas, t0, running, player, screen, pipes, score, score_txt
     t0 = time.time()
     while (time.time() - t0) < 1:
         pass
     else:
+        player['rect'].position = [60,20]
         pipe_setup(0)
         pipe_setup(1)
         pipes['pos'][1][0] = 900
@@ -167,12 +169,28 @@ def game_loop():
                 pipe[1].draw('green',canvas)
                 if pipe[0].x+pipe[0].w < 0:
                     pipe_setup(0)
+                    score += 1
                 if pipe[1].x+pipe[1].w < 0:
                     pipe_setup(1)
-
+                    score += 1
+            
+                if player['rect'].collidewith(pipe[0]) or player['rect'].collidewith(pipe[1]) or player['rect'].y+(player['rect'].h/2) > 600:
+                    death()
+            canvas.delete(score_txt)
+            score_txt = canvas.create_text(300,10,text=f"SCORE: {score}",fill="white")
             t0 = time.time()
-
 loop = threading.Thread(target=game_loop)
+
+def input_manager(event):
+    global player, fps, loop, score
+    if event.keycode == 32:
+        if running:
+            player['speed'][1] = -5
+        else:
+            score = 0
+            loop.start()
+root.bind('<Key>',input_manager)
+
 loop.start()
 
 root.mainloop()
