@@ -37,7 +37,7 @@ def update(i):
 
 
 C_slider = ttk.Scale(root,from_=-100,to=100,command=lambda x=0:update(0))
-K_slider = ttk.Scale(root,from_=173,to=374,command=lambda x=1:update(1))
+K_slider = ttk.Scale(root,from_= 173,to=374,command=lambda x=1:update(1))
 F_slider = ttk.Scale(root,from_=-148,to=212,command=lambda x=2:update(2))
 C_slider.grid(row=0,column=1)
 K_slider.grid(row=1,column=1)
