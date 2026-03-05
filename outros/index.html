@@ -1,0 +1,149 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <div class="tab">
+            <button id="default" class="tab_b active" onclick="open_tab(event,'resign')">Carta de demissão</button>
+            <button class="tab_b" onclick="open_tab(event,'temp')">Temperaturas</button>
+        </div>
+        <div class="dummy">
+            <div class="content" id="resign">
+                text
+            </div>
+            <div class="content" id="temp">
+                <h1>Conversor de Temperaturas</h1>
+                <div class="container_temp"><input onchange="temperature('slider',0)" value="0" id="C_num" class="num" type="number"><h3 id="C_label" class="label">C</h3> <input id="C_slider" class="slider" type="range" min="-100" max="100"></div>
+                <div class="container_temp"><input onchange="temperature('slider',1)" value="0" id="K_num" class="num" type="number"><h3 id="K_label" class="label">K</h3> <input id="K_slider" class="slider" type="range" min=" 173" max="374"></div>
+                <div class="container_temp"><input onchange="temperature('slider',2)" value="0" id="F_num" class="num" type="number"><h3 id="F_label" class="label">F</h3> <input id="F_slider" class="slider" type="range" min="-148" max="212"></div>
+            </div>
+        </div>
+    </body>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color:rgb(219, 199, 173);
+            color: rgb(29, 3, 46);
+        }
+        .tab {
+            overflow: hidden;
+            border-style: 2px solid;
+        }
+        .content {
+            padding-left: 20px;
+            display: block;
+            background-color: rgb(255, 252, 237);
+        }
+        .dummy {
+            display: block;
+            border: 5px solid rgb(161, 174, 211);
+            background-color: rgb(255, 252, 237);
+            padding-bottom: 300px;
+        }
+        .container_temp {
+            display: flex;
+            justify-content: left;
+            padding-bottom: 10px;
+        }
+        .container_temp .slider {
+            width: 495px;
+        }
+        
+        .tab button {
+            color: rgb(255, 252, 237);
+            background-color:rgb(173, 185, 219);
+            float: left;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            height: 40px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            color: rgb(255, 252, 237);
+            background-color: rgb(183, 193, 219);
+        }
+        .tab button.active {
+            color: rgb(255, 252, 237);
+            background-color: rgb(161, 174, 211);
+        }
+
+    </style>
+    <script>
+        const targets = {
+                "slider" : {
+                    "K" : document.getElementById('K_slider'),
+                    "F" : document.getElementById('F_slider'),
+                    "C" : document.getElementById('C_slider')
+                },
+                "num" : {
+                    'K': document.getElementById('K_num'),
+                    'F': document.getElementById('F_num'),
+                    'C': document.getElementById('C_num')
+                },
+                "index" : {
+                    'C': 0,
+                    'K': 1,
+                    'F': 2
+                }
+            }
+        const temp_vals = {
+                "K" : 0,
+                "F" : 0,
+                "C" : 0
+            }
+        const dummy = ['C','K','F'];
+        
+        function open_tab(event,tab) {
+            let i, tab_content, tab_buttons
+            tab_content = document.getElementsByClassName('content');
+            tab_buttons = document.getElementsByClassName('tab_b');
+
+            let target = document.getElementById(tab);
+            let button = event.currentTarget
+            
+            for (i=0; (i < tab_content.length) && (i < tab_content.length); i++) {
+                tab_content[i].style.display = 'none';
+                tab_buttons[i].className = tab_buttons[i].className.replace(' active','')
+            };
+
+            target.style.display = 'block'
+            button.className += ' active'
+        }
+        function temperature(type,index) {
+            switch (index) {
+                case 0:
+                    temp_vals.C = Number(targets[type].C.value)
+                    temp_vals.K = Math.round(temp_vals.C + 273.15)
+                    temp_vals.F = Math.round(temp_vals.C * 9/5 + 32)
+                    break
+                case 1:
+                    temp_vals.K = Number(targets[type].K.value)
+                    temp_vals.C = Math.round(temp_vals.K - 273.15)
+                    temp_vals.F = Math.round((temp_vals.C * 1.8) + 32)
+                    break
+                case 2:
+                    temp_vals.F = Number(targets[type].F.value)
+                    temp_vals.C = Math.round((temp_vals.F - 32)*5/9)
+                    temp_vals.K = Math.round(temp_vals.C + 273.15)
+                    break
+            }
+            for (let i of dummy) {
+                targets.num[i].value = temp_vals[i]
+                targets.slider[i].value = temp_vals[i]
+            }
+        }
+        
+        console.log(targets.slider[dummy[0]])
+        for (let i of dummy) {
+            targets.slider[i].addEventListener('input', (event) => {
+                temperature('slider',targets.index[i])
+            })
+        }
+
+        document.getElementById('default').click()
+    </script>
+</html>
