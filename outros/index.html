@@ -6,6 +6,7 @@
         <div class="tab">
             <button id="default" class="tab_b active" onclick="open_tab(event,'resign')">Carta de demissão</button>
             <button class="tab_b" onclick="open_tab(event,'temp')">Temperaturas</button>
+            <button class="tab_b" onclick="open_tab(event,'sock')">Teste Socket</button>
         </div>
         <div class="dummy">
             <div class="content" id="resign">
@@ -16,6 +17,32 @@
                 <div class="container_temp"><input onchange="temperature('slider',0)" value="0" id="C_num" class="num" type="number"><h3 id="C_label" class="label">C</h3> <input id="C_slider" class="slider" type="range" min="-100" max="100"></div>
                 <div class="container_temp"><input onchange="temperature('slider',1)" value="0" id="K_num" class="num" type="number"><h3 id="K_label" class="label">K</h3> <input id="K_slider" class="slider" type="range" min=" 173" max="374"></div>
                 <div class="container_temp"><input onchange="temperature('slider',2)" value="0" id="F_num" class="num" type="number"><h3 id="F_label" class="label">F</h3> <input id="F_slider" class="slider" type="range" min="-148" max="212"></div>
+            </div>
+            <div class="content" id="sock">
+                <h1>Teste de Socket</h1>
+                <div class="container_sock">
+                    <div id="sock_div">&ltdiv>
+                    </div>
+                    <input id="sock_text" type="text">
+                    <button id="sock_button" onclick="socket_test()">send</button>
+                </div>
+                <div class="container login">
+                    <h3>LOGIN</h3>
+                    <div class="container_sock" id="login">
+                        <form id="login_form" action="">
+                            <div class="container username">
+                                <label for="username">usuário:</label>
+                                <input id="username" type="text">
+                            </div>
+                            <div class="container password">
+                                <label for="password">senha:</label>
+                                <input id="password" type="password">
+                            </div>
+                            <div><button id="login_button">fazer login / registrar-se</button></div>
+                        </form>
+                    </div>
+                    <p id="warning" color="red">N&atilde;O USE SUA SENHA REAL</p>
+                </div>
             </div>
         </div>
     </body>
@@ -61,6 +88,7 @@
             cursor: pointer;
             padding: 14px 16px;
             transition: 0.3s;
+            font-family: 'Courier New', Courier, monospace;
         }
         .tab button:hover {
             color: rgb(255, 252, 237);
@@ -71,8 +99,135 @@
             background-color: rgb(161, 174, 211);
         }
 
+        .content#sock {
+            height: 400px;
+        }
+        .container_sock {
+            display: block;
+            background-color: rgb(219, 199, 173);
+            padding: 10px;
+            border-radius: 15px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: rgb(173, 185, 219);
+            width: 279px;
+            float: left;
+            margin: 10px;
+        }
+        .container.login {
+            display: grid;
+            place-items: center;
+        }
+        .container.username label {
+            display: flex;
+            justify-content: left;
+        }
+        .container.password label {
+            display: flex;
+            justify-content: left;
+        }
+
+
+        #warning {
+            background-color: white;
+            color: brown;
+        }
+        #login_button {
+            color: rgb(255, 252, 237);
+            background-color:rgb(173, 185, 219);
+            border-radius: 15px;
+            margin-top: 20px;
+            height: 30px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #login_button:hover {
+            color: rgb(255, 252, 237);
+            background-color: rgb(183, 193, 219);
+        }
+        #login_button.active {
+            color: rgb(255, 252, 237);
+            background-color: rgb(161, 174, 211);
+        }
+        #sock_div {
+            display:block;
+            border-radius: 15px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: rgb(173, 185, 219);
+            background-color: white;
+            padding: 10px;
+            height: 300px;
+            width: 255px;
+            overflow-y: scroll;
+            overflow-x: inherit;
+        }
+        .bubble {
+            justify-self: right;
+            width: 200px;
+            background-color: rgb(255, 252, 237);
+            border-style: solid;
+            border-radius: 15px;
+            border-color: rgb(219, 199, 173);
+            overflow-wrap: anywhere;
+        }
+        .bubble p {
+            justify-self: right;
+            padding-right: 10px;
+        }
+        .bubble.server {
+            justify-self: left;
+            width: 200px;
+            background-color: rgb(255, 252, 237);
+            border-style: dotted;
+            border-radius: 15px;
+            border-color: rgb(219, 199, 173);
+            overflow-wrap:anywhere;
+        }
+        .bubble.server p {
+            justify-self: left;
+            padding-left: 10px;
+        }
+        #sock_text {
+            color: black;
+            background-color:white;
+            border-radius: 15px;
+            height: 20px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: rgb(173, 185, 219);
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        #sock_button {
+            color: rgb(255, 252, 237);
+            background-color:rgb(173, 185, 219);
+            border-radius: 15px;
+            height: 40px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #sock_button:hover {
+            color: rgb(255, 252, 237);
+            background-color: rgb(183, 193, 219);
+        }
+        #sock_button.active {
+            color: rgb(255, 252, 237);
+            background-color: rgb(161, 174, 211);
+        }
+
     </style>
     <script>
+        const text_field = document.getElementById('sock_div')
         const targets = {
                 "slider" : {
                     "K" : document.getElementById('K_slider'),
@@ -136,14 +291,49 @@
                 targets.slider[i].value = temp_vals[i]
             }
         }
-        
-        console.log(targets.slider[dummy[0]])
-        for (let i of dummy) {
-            targets.slider[i].addEventListener('input', (event) => {
-                temperature('slider',targets.index[i])
-            })
+
+        function message(data,type,sender) {
+            let _div = document.createElement('div')
+            let text = document.createElement('p')
+            let user = document.createElement('p')
+
+            _div.style.height = '15px'
+            div.className = 'bubble'+type
+
+            user.innerText = sender
+            user.className = 'username'+type
+
+            text.innerText = data
+
+            div.appendChild(text)
+            _div.appendChild(user)
+            
+            text_field.appendChild(div)
+            text_field.appendChild(_div)
         }
 
+        function socket_test() {
+            const entry = document.getElementById('sock_text').value
+            const socket = new WebSocket("ws://localhost:55555")
+
+            socket.onopen = function () {
+                socket.send(JSON.stringify(
+                    {}
+                ))
+            }
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data)
+                switch (data.type) {
+                    case 'message':
+                        break
+                    case 'reload':
+                        break
+                    case 'accepted':
+                        message(data.message,'',sender)
+                }
+            }
+        }
+        
         document.getElementById('default').click()
     </script>
 </html>
