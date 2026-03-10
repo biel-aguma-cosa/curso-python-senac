@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="global.css">
+        <link rel="stylesheet" href="temperature.css">
+        <link rel="stylesheet" href="socket.css">
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <div class="tab">
+            <button id="default" class="tab_b active" onclick="open_tab(event,'resign')">Carta de demissão</button>
+            <button class="tab_b" onclick="open_tab(event,'temp')">Temperaturas</button>
+            <button id="socket_tab" class="tab_b" onclick="open_tab(event,'sock')">Teste Socket</button>
+        </div>
+        <div class="dummy">
+            <div class="content" id="resign">
+                text
+            </div>
+            <div class="content" id="temp">
+                <h1>Conversor de Temperaturas</h1>
+                <div class="container_temp"><input onchange="temperature('slider',0)" value="0" id="C_num" class="num" type="number"><h3 id="C_label" class="label">C</h3> <input id="C_slider" class="slider" type="range" min="-100" max="100"></div>
+                <div class="container_temp"><input onchange="temperature('slider',1)" value="0" id="K_num" class="num" type="number"><h3 id="K_label" class="label">K</h3> <input id="K_slider" class="slider" type="range" min=" 173" max="374"></div>
+                <div class="container_temp"><input onchange="temperature('slider',2)" value="0" id="F_num" class="num" type="number"><h3 id="F_label" class="label">F</h3> <input id="F_slider" class="slider" type="range" min="-148" max="212"></div>
+            </div>
+            <div class="content" id="sock">
+                <div class="container socket_test">
+                    <div class="container sock">
+                        <h1>Teste de Socket</h1>
+                        <div class="sock_container">
+                            <div id="sock_field">&ltdiv></div>
+                            <input id="sock_text" type="text">
+                            <button id="sock_button" onclick="">send</button>
+                        </div>
+                    </div>
+                    <div class="container login">
+                        <h3>LOGIN</h3>
+                        <div class="sock_container" id="login">
+                            <form id="login_form" action="">
+                                <div class="container username">
+                                    <label for="username">usuário:</label>
+                                    <input name="username" type="text">
+                                </div>
+                                <div class="container password">
+                                    <label for="password">senha:</label>
+                                    <input name="password" type="password">
+                                </div>
+                                <div><button type="submit" id="login_button">fazer login / registrar-se</button></div>
+                            </form>
+                        </div>
+                        <p id="warning" color="red">N&atilde;O USE SUA SENHA REAL</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        main()
+    </script>
+</html>

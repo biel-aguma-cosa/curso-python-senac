@@ -1,0 +1,8 @@
+.container_temp {
+    display: flex;
+    justify-content: left;
+    padding-bottom: 10px;
+}
+.container_temp .slider {
+    width: 495px;
+}
