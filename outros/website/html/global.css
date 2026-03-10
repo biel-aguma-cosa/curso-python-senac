@@ -40,3 +40,14 @@ body {
     color: rgb(255, 252, 237);
     background-color: rgb(161, 174, 211);
 }
+.container_b {
+    display: block;
+    background-color: rgb(219, 199, 173);
+    padding: 10px;
+    border-radius: 15px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgb(173, 185, 219);
+    float: left;
+    margin: 10px;
+}

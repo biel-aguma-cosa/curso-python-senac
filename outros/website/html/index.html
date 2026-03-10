@@ -16,16 +16,20 @@
                 text
             </div>
             <div class="content" id="temp">
-                <h1>Conversor de Temperaturas</h1>
-                <div class="container_temp"><input onchange="temperature('slider',0)" value="0" id="C_num" class="num" type="number"><h3 id="C_label" class="label">C</h3> <input id="C_slider" class="slider" type="range" min="-100" max="100"></div>
-                <div class="container_temp"><input onchange="temperature('slider',1)" value="0" id="K_num" class="num" type="number"><h3 id="K_label" class="label">K</h3> <input id="K_slider" class="slider" type="range" min=" 173" max="374"></div>
-                <div class="container_temp"><input onchange="temperature('slider',2)" value="0" id="F_num" class="num" type="number"><h3 id="F_label" class="label">F</h3> <input id="F_slider" class="slider" type="range" min="-148" max="212"></div>
+                <div class="container temp">
+                    <h1>Conversor de Temperaturas</h1>
+                    <div class="container_b temp">
+                        <div class="container_temp"><input oninput="temperature('num',0)" value="0" id="C_num" class="num" type="number"><h3 id="C_label" class="label">C</h3> <input oninput="temperature('slider',0)" id="C_slider" class="slider" type="range" min="-100" max="100"></div>
+                        <div class="container_temp"><input oninput="temperature('num',1)" value="0" id="K_num" class="num" type="number"><h3 id="K_label" class="label">K</h3> <input oninput="temperature('slider',1)" id="K_slider" class="slider" type="range" min=" 173" max="374"></div>
+                        <div class="container_temp"><input oninput="temperature('num',2)" value="0" id="F_num" class="num" type="number"><h3 id="F_label" class="label">F</h3> <input oninput="temperature('slider',2)" id="F_slider" class="slider" type="range" min="-148" max="212"></div>
+                    </div>
+                </div>
             </div>
             <div class="content" id="sock">
                 <div class="container socket_test">
                     <div class="container sock">
                         <h1>Teste de Socket</h1>
-                        <div class="sock_container">
+                        <div class="container_b socket">
                             <div id="sock_field">&ltdiv></div>
                             <input id="sock_text" type="text">
                             <button id="sock_button" onclick="">send</button>
@@ -33,7 +37,7 @@
                     </div>
                     <div class="container login">
                         <h3>LOGIN</h3>
-                        <div class="sock_container" id="login">
+                        <div class="container_b" id="login">
                             <form id="login_form" action="">
                                 <div class="container username">
                                     <label for="username">usuário:</label>

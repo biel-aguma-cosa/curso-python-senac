@@ -1,20 +1,13 @@
 .content#sock {
     height: 400px;
 }
-.sock_container {
-    display: block;
-    background-color: rgb(219, 199, 173);
-    padding: 10px;
-    border-radius: 15px;
-    border-width: 2px;
-    border-style: solid;
-    border-color: rgb(173, 185, 219);
+
+.container_b.socket {
     width: 500px;
     height: 400px;
-    float: left;
-    margin: 10px;
 }
-.sock_container#login {
+
+.container_b#login {
     width: 250;
     height: 150;
 }

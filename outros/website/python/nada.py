@@ -5,6 +5,7 @@ import websockets
 
 dir = os.path.dirname(os.path.realpath(__file__))
 
+
 def data_read():
     global dir
     with open(os.path.join(dir,'socket_data.json'),'r') as file:
@@ -14,13 +15,16 @@ def data_read():
 def data_write(raw_data,target):
     global dir
     data = data_read()
-    data[target][raw_data['index']] = raw_data['data']
+    if target == 'users':
+        data['users'][raw_data['index']] = raw_data['data']
+    elif target == 'messages':
+        data['messages'].append(raw_data['data'])
+    
     with open(os.path.join(dir,'socket_data.json'),'w') as file:
         dump_data = json.dumps(data,indent=3)
         file.write(dump_data)
         file.close()
-
-print(data_read())
+        
 
 async def conn_handler(socket):
     print('[client connected]')
@@ -33,22 +37,26 @@ async def conn_handler(socket):
                         if data['user']['password'] == data_read()['users'][data['user']['username']]['password']:
                             await socket.send(json.dumps({
                                 'type':'login',
-                                'username':data['user']['username']
+                                'username':data['user']['username'],
+                                'result': 'login'
                             }))
                     else:
-                        data['user']['username'] = data['user']
                         data_write({
                             'data' : data['user'],
                             'index' : data['user']['username'],
                         },'users')
                         await socket.send(json.dumps({
                                 'type':'login',
-                                'username':data['user']['username']
+                                'username':data['user']['username'],
+                                'result': 'register'
                             }))
                 case 'message':
                     pass
                 case 'reload':
-                    pass
+                    await socket.send(json.dumps({
+                                'type':'login',
+                                'username':data['user']['username']
+                            }))
                 case 'update':
                     pass
 
