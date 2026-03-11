@@ -71,6 +71,7 @@ function speak() {
             }
         ))
     }
+    globalThis.sock.entry_field.value = ''
 }
 
 function message_handler(data) {
