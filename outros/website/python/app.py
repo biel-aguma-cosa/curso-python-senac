@@ -27,7 +27,6 @@ async def send(client,dict):
 
 async def handler(socket):
     global clients, client_data, all_data, public_data
-    logged = False
     while True:
         try:
             do_broadcast = False
@@ -37,6 +36,7 @@ async def handler(socket):
                     print(thing,':',rdata[thing])
                 match rdata['type']:
                     case 'login':
+                        logged = False
                         if rdata['user']['name'] in client_data:
                             if rdata['user']['password'] == client_data[rdata['user']['name']]['password']:
                                 logged = True
@@ -69,6 +69,7 @@ async def handler(socket):
                 else:
                     await send(socket,data)
         except websockets.ConnectionClosed:
+            logged = False
             if socket in clients:
                 clients.remove(socket)
                 data = {'type':'message','sender':'server','message':f'{socket_data[socket]['name']} desconectou-se'}

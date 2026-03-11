@@ -94,12 +94,12 @@
     justify-self: left;
     padding-left: 10px;
 }
-p.username {
+.user {
     font-family: 'Courier New', Courier, monospace;
-    justify-self: right;
     margin-right: 10px;
+    justify-self: right;
 }
-p.username.server {
+.user.server {
     justify-self: left;
     margin-left: 10px;
 }

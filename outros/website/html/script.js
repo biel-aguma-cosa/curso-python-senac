@@ -42,9 +42,9 @@ function message(data,type,sender) {
     let text = document.createElement('p')
     let user = document.createElement('p')
 
-    _div.style.height = '15px'
+    _div.style.backgroundColor = 'rgba(102, 127, 207, 0.48)'
     div.className = 'bubble'+type
-    user.className = 'username'+type
+    user.className = 'user'+type
 
     user.innerText = sender
     text.innerText = data
