@@ -94,6 +94,15 @@
     justify-self: left;
     padding-left: 10px;
 }
+p.username {
+    font-family: 'Courier New', Courier, monospace;
+    justify-self: right;
+    margin-right: 10px;
+}
+p.username.server {
+    justify-self: left;
+    margin-left: 10px;
+}
 #sock_text {
     color: rgb(29, 3, 46);
     background-color:white;

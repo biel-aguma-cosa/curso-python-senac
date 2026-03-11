@@ -41,93 +41,107 @@ function message(data,type,sender) {
     let div = document.createElement('div')
     let text = document.createElement('p')
     let user = document.createElement('p')
+
     _div.style.height = '15px'
     div.className = 'bubble'+type
-    user.innerText = sender
     user.className = 'username'+type
+
+    user.innerText = sender
     text.innerText = data
+
     div.appendChild(text)
     _div.appendChild(user)
     
-    globalThis.sock.text_field.appendChild(div)
     globalThis.sock.text_field.appendChild(_div)
+    globalThis.sock.text_field.appendChild(div)
 }
 function speak() {
     let entry = globalThis.sock.entry_field.value
-    if (globalThis.user_data.username && globalThis.user_data.password) {
-        socket.send(JSON.stringify(
+
+    if (
+        globalThis.user.name &&
+        globalThis.user.password &&
+        globalThis.socket.readyState == WebSocket.OPEN
+    ) {
+        globalThis.socket.send(JSON.stringify(
             {
                 'type' : 'message',
                 'message' : entry,
-                'user_data' : globalThis.user_data
+                'user' : globalThis.user
             }
         ))
     }
 }
 
-function login() {
-    globalThis.socket = new WebSocket("ws://localhost:55555")
-    socket = globalThis.socket
+function message_handler(data) {
+        switch (data.type) {
+            case 'message':
+                if (data.sender == globalThis.user.name) {
+                    message(
+                        data.message,
+                        '',
+                        data.sender
+                    )
+                }else{
+                    message(
+                        data.message,
+                        ' server',
+                        data.sender
+                    )
+                }
+                break
+            case 'login':
+                globalThis.user.name     = data.user.name
+                globalThis.user.password = data.user.password
+                for (let msg of data.data) {
+                    if (msg.sender == globalThis.user.name) {
+                        message(
+                            msg.message,
+                            '',
+                            msg.sender
+                        )}else{
+                        message(
+                            msg.message,
+                            ' server',
+                            msg.sender
+                        )}}
+                break
+            case 'error':
+                message('ERRO!',' server','server')
+            default:
+                break
+        }
+}
 
-    console.log(globalThis.user_data)
-    console.log(JSON.stringify(
+function login() {
+    globalThis.socket = new WebSocket("ws://192.168.1.4:52007")
+
+    console.log(globalThis.user)
+    globalThis.socket.onopen = function () {
+        globalThis.socket.send(JSON.stringify(
             {
                 'type' : 'login',
-                'user' : globalThis.user_data
-            }
-        ))
-    socket.onopen = function () {
-        socket.send(JSON.stringify(
-            {
-                'type' : 'login',
-                'user' : globalThis.user_data
+                'user' : globalThis.user
             }
         ))
     }
-    socket.onmessage = function (event) {
-        const data = JSON.parse(event.data)
-        switch (data.type) {
-            case 'message':
-                if (data.username != username) {
-                    message(data.message,' server',data.username)
-                }
-                break
-            case 'reload':
-                for (let child of globalThis.sock.text_field.childNodes) {
-                    child.remove()
-                }
-                for (let text of data.messages) {
-                    if (text.sender != username) {
-                        message(text.message,'',text.sender)
-                    }
-                }
-                break
-            case 'accepted':
-                globalThis.sock.entry_field.value = ''
-                message(data.message,'',sender)
-                break
-            case 'login':
-                if (data.username == globalThis.user_data.username) {
-                    message(
-                        globalThis.user_data.username+' entrou',
-                        '',
-                        globalThis.user_data.username)
-                }else{
-                    message(
-                        data.username+' entrou',
-                        ' server',
-                        data.username)
-                }
-                break
+    globalThis.socket.onmessage = function (event) {
+        console.log('message received!')
+        const reader = new FileReader()
+
+        reader.onload = function () {
+            message_handler(JSON.parse(reader.result))
         }
+        reader.readAsText(event.data)
+        
     }
 }
 
 function login_submission_handler(event) {
     event.preventDefault()
     const data = new FormData(event.target)
-    globalThis.user_data = {
-        'username' : data.get('username'),
+    globalThis.user = {
+        'name' : data.get('username'),
         'password': data.get('password')
     }
 
@@ -135,6 +149,8 @@ function login_submission_handler(event) {
 }
 
 function main() {
+    globalThis.reader = new FileReader()
+
     globalThis.targets = {
         "slider" : {
             "K" : document.getElementById('K_slider'),
@@ -152,7 +168,7 @@ function main() {
 
     globalThis.temp_vals = {"K" : 0,        "F" : 0,        "C" : 0    }
     globalThis.dummy = ['C','K','F'];
-    globalThis.user_data = {'username' : null,'password' : null}
+    globalThis.user = {'name' : null,'password' : null}
 
     globalThis.socket_tab = document.getElementById('socket_tab')
     globalThis.form = document.getElementById('login_form');
