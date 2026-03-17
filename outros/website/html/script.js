@@ -12,6 +12,18 @@ function open_tab(event,tab) {
     target.style.display = 'block'
     button.className += ' active'
 }
+
+function patient_click(event) {
+    let i
+    let selected_patient = event.currentTarget
+    let patients = document.getElementsByClassName('patient')
+    for (i=0; (i < patients.length); i++) {
+        patients[i].className = patients[i].className.replace(' active','')
+    }
+    selected_patient.className += ' active'
+    console.log(document.getElementsByClassName('tab_b')[0].style)
+}
+
 function temperature(type,index) {
     const dummy = ['K','F','C']
     switch (index) {

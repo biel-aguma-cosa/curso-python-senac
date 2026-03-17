@@ -3,15 +3,94 @@
         <link rel="stylesheet" href="global.css">
         <link rel="stylesheet" href="temperature.css">
         <link rel="stylesheet" href="socket.css">
+        <link rel="stylesheet" href="medic.css">
         <script src="script.js"></script>
     </head>
     <body>
         <div class="tab">
-            <button id="default" class="tab_b active" onclick="open_tab(event,'resign')">Carta de demissão</button>
-            <button class="tab_b" onclick="open_tab(event,'temp')">Temperaturas</button>
+            <button id="default" class="tab_b" onclick="open_tab(event,'temp')">Temperaturas</button>
+            <button class="tab_b" onclick="open_tab(event,'resign')">Carta de demissão</button>
             <button id="socket_tab" class="tab_b" onclick="open_tab(event,'sock')">Teste Socket</button>
+            <button class="tab_b" onclick="open_tab(event,'medic')">Ficha M&eacute;dica</button>
         </div>
         <div class="dummy">
+            <div class="content" id="medic">
+                <div class="container medical_sheet">
+                    <div class="container med">
+                        <h1>Ficha Médica</h1>
+                        <div class="container_b med">
+                            <div class="container medical_data">
+                                <table class="patient_data">
+                                    <tr>
+                                        <th>NOME</th>
+                                        <th>
+                                            <input type="text">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>NASCIMENTO</th>
+                                        <th>
+                                            <input type="number">
+                                            <input type="number">
+                                            <input type="number">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>SEXO</th>
+                                        <th>
+                                            <input type="radio">
+                                            <input type="radio">
+                                            <input type="radio">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>DIAGN&Oacute;STICO</th>
+                                        <th>
+                                            <input type="text">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>ESTADO</th>
+                                        <th>
+                                            <input type="text">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>TRATAMENTO</th>
+                                        <th>
+                                            <input type="text">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>LIBERA&Ccedil;&Atilde;O</th>
+                                        <th>
+                                            <input type="number">
+                                            <input type="number">
+                                            <input type="number">
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="container med_buttons">
+                                <button>Novo Paciente</button> <button> Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container patients">
+                        <h1>Pacientes</h1>
+                        <div class="container_b patients">
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_0</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_1</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_2</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_3</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_4</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_5</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_6</h3>
+                            <h3 class="patient" onclick="patient_click(event)">placeholder_7</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="content" id="resign">
                 text
             </div>
