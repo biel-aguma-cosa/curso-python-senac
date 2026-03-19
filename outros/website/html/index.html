@@ -30,17 +30,15 @@
                                     <tr>
                                         <th>NASCIMENTO</th>
                                         <th>
-                                            <input type="number">
-                                            <input type="number">
-                                            <input type="number">
+                                            <input type="date">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>SEXO</th>
                                         <th>
-                                            <input type="radio">
-                                            <input type="radio">
-                                            <input type="radio">
+                                            <input name="sex" value="F" type="radio">a</input>
+                                            <input name="sex" value="M" type="radio">b</input>
+                                            <input name="sex" value="?" type="radio">c</input>
                                         </th>
                                     </tr>
                                     <tr>
@@ -52,27 +50,25 @@
                                     <tr>
                                         <th>ESTADO</th>
                                         <th>
-                                            <input type="text">
+                                            <textarea class="med" rows="3" cols="40"></textarea>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>TRATAMENTO</th>
                                         <th>
-                                            <input type="text">
+                                            <textarea class="med" rows="3" cols="40"></textarea>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>LIBERA&Ccedil;&Atilde;O</th>
                                         <th>
-                                            <input type="number">
-                                            <input type="number">
-                                            <input type="number">
+                                            <input type="date">
                                         </th>
                                     </tr>
                                 </table>
                             </div>
                             <div class="container med_buttons">
-                                <button>Novo Paciente</button> <button> Salvar</button>
+                                <button>Novo Paciente</button> <button> Salvar</button> <button onclick="debug()">debug</button>
                             </div>
                         </div>
                     </div>
@@ -120,11 +116,11 @@
                             <form id="login_form" action="">
                                 <div class="container username">
                                     <label for="username">usu&aacute;rio:</label>
-                                    <input name="username" type="text">
+                                    <input name="username" type="text" placeholder="nome de usuário">
                                 </div>
                                 <div class="container password">
                                     <label for="password">senha:</label>
-                                    <input name="password" type="password">
+                                    <input name="password" type="password" placeholder="********">
                                 </div>
                                 <div><button type="submit" id="login_button">fazer login / registrar-se</button></div>
                             </form>

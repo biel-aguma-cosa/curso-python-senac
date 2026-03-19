@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 import os
 
 dir = os.path.realpath(os.path.dirname(__file__))
@@ -7,7 +8,8 @@ dir = os.path.realpath(os.path.dirname(__file__))
 bird = pygame.transform.scale(pygame.image.load(os.path.join(dir,'pasro.png')),(40,40))
 post_0 = pygame.transform.scale(pygame.image.load(os.path.join(dir,'poste.png')),(60,320))
 post_1 = pygame.transform.rotate(post_0,180)
-sky  = pygame.transform.scale(pygame.image.load(os.path.join(dir,'ceu.png'))  ,(600,400))
+sky_0  = pygame.transform.scale(pygame.image.load(os.path.join(dir,'chao.png'))  ,(602,400))
+sky_1  = pygame.transform.flip(sky_0,True,False)
 
 running = True
 dt = 0
@@ -18,11 +20,27 @@ pygame.init()
 
 font = pygame.font.Font(pygame.font.match_font('consolas'),20)
 
+try:
+    with open(os.path.join(dir,'hs.data'),'r') as save_file:
+        HIGH_SCORE = int(save_file.read())
+        save_file.close()
+except:
+    with open(os.path.join(dir,'hs.data'),'w') as save_file:
+        save_file.write('0')
+        save_file.close()
+    HIGH_SCORE = 0
+
 PAUSED = True
 SCORE = 0
 GAP = 120
 
-player = pygame.rect.Rect(100,200,40,40)
+bird.set_colorkey('white')
+
+player = pygame.sprite.Sprite()
+player.rect  = pygame.rect.Rect(100,200,40,40)
+player.radius = 20
+player.image = bird.convert_alpha()
+
 y_speed = 0
 
 sky_rect = [
@@ -36,6 +54,11 @@ pipes = [
 ]
 passed = [False,False]
 
+def collide_circle_rect(sprite,rect):
+    closest_x = max(rect.left,min(sprite.rect.centerx,rect.right ))
+    closest_y = max(rect.top ,min(sprite.rect.centery,rect.bottom))
+    distance = math.hypot(closest_x-sprite.rect.centerx,closest_y-sprite.rect.centery)
+    return distance < sprite.radius
 
 pipes[0][0].bottom = random.randint(0,400-(GAP+10))
 pipes[1][0].bottom = random.randint(0,400-(GAP+10))
@@ -53,14 +76,14 @@ while running:
                     pipes[1][0].bottom = random.randint(0,400-(GAP+10))
                     pipes[0][0].left = 600
                     pipes[1][0].left = 900
-                    player.topleft = 100, 200
+                    player.rect.topleft = 100, 200
                     PAUSED = False
     screen.fill('black')
 
 
     if not PAUSED:
         y_speed += 5
-        player.top += y_speed*dt
+        player.rect.top += y_speed*dt
 
         sky_rect[0].left -= 1
         sky_rect[1].left -= 1
@@ -78,14 +101,22 @@ while running:
             pair[0].left -= 100*dt
             pair[1].topleft = (pair[0].left,pair[0].bottom+GAP)
 
-            if player.colliderect(pair[0]) or player.colliderect(pair[1]):
+            if collide_circle_rect(player,pair[0]) or collide_circle_rect(player,pair[1]):
                 PAUSED = True
-            elif player.left > pair[0].right and not passed[i]:
+            elif player.rect.left > pair[0].right and not passed[i]:
                 SCORE += 1
                 passed[i] = True
+    if player.rect.top > 400:
+        PAUSED = True
 
-    screen.blit(sky,sky_rect[0])
-    screen.blit(sky,sky_rect[1])
+    if SCORE > HIGH_SCORE:
+        HIGH_SCORE = SCORE
+        with open(os.path.join(dir,'hs.data'),'w') as save_file:
+            save_file.write(str(HIGH_SCORE))
+            save_file.close()
+
+    screen.blit(sky_0,sky_rect[0])
+    screen.blit(sky_1,sky_rect[1])
 
     screen.blit(post_1,(pipes[0][0].left,pipes[0][0].bottom-320))
     screen.blit(post_1,(pipes[1][0].left,pipes[1][0].bottom-320))
@@ -93,8 +124,9 @@ while running:
     screen.blit(post_0,pipes[0][1])
     screen.blit(post_0,pipes[1][1])
 
-    screen.blit(bird,player)
-    screen.blit(font.render(f'SCORE: {SCORE}',False,'white'),(20,20))
+    screen.blit(player.image,player.rect)
+    screen.blit(font.render(f'HIGH SCORE: {HIGH_SCORE}',False,'white'),(10,10))
+    screen.blit(font.render(f'     SCORE: {SCORE}',False,'white'),(10,30))
     
     pygame.display.flip()
     dt = clock.tick(60)/1000
