@@ -9,7 +9,7 @@
     <body>
         <div class="tab">
             <button id="default" class="tab_b" onclick="open_tab(event,'temp')">Temperaturas</button>
-            <button class="tab_b" onclick="open_tab(event,'resign')">Carta de demissão</button>
+            <button class="tab_b" onclick="open_tab(event,'resign')">Carta de demiss&atilde;o</button>
             <button id="socket_tab" class="tab_b" onclick="open_tab(event,'sock')">Teste Socket</button>
             <button class="tab_b" onclick="open_tab(event,'medic')">Ficha M&eacute;dica</button>
         </div>
@@ -17,73 +17,84 @@
             <div class="content" id="medic">
                 <div class="container medical_sheet">
                     <div class="container med">
-                        <h1>Ficha Médica</h1>
+                        <h1>Ficha M&eacute;dica</h1>
                         <div class="container_b med">
                             <div class="container medical_data">
+                                <form id="medic_form" action="">
                                 <table class="patient_data">
                                     <tr>
                                         <th>NOME</th>
                                         <th>
-                                            <input type="text">
+                                            <input name="name" type="text">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>NASCIMENTO</th>
                                         <th>
-                                            <input type="date">
+                                            <input name="birthdate" type="date">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>SEXO</th>
                                         <th>
-                                            <input name="sex" value="F" type="radio">a</input>
-                                            <input name="sex" value="M" type="radio">b</input>
-                                            <input name="sex" value="?" type="radio">c</input>
+                                            <input name="sex" value="F" type="radio">Feminino</input>
+                                            <input name="sex" value="M" type="radio">Masculino</input>
+                                            <input name="sex" value="?" type="radio">Outro</input>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>DIAGN&Oacute;STICO</th>
                                         <th>
-                                            <input type="text">
+                                            <input name="diagnosis" type="text">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>ESTADO</th>
                                         <th>
-                                            <textarea class="med" rows="3" cols="40"></textarea>
+                                            <textarea name="state" class="med" rows="3" cols="40"></textarea>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>TRATAMENTO</th>
                                         <th>
-                                            <textarea class="med" rows="3" cols="40"></textarea>
+                                            <textarea name="treatment" class="med" rows="3" cols="40"></textarea>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>LIBERA&Ccedil;&Atilde;O</th>
                                         <th>
-                                            <input type="date">
+                                            <input name="release" type="date">
                                         </th>
                                     </tr>
                                 </table>
+                                </form>
                             </div>
                             <div class="container med_buttons">
-                                <button>Novo Paciente</button> <button> Salvar</button> <button onclick="debug()">debug</button>
+                                <button onclick="patient_new()">Novo Paciente</button> <button onclick="patient_save()"> Salvar</button>
                             </div>
                         </div>
                     </div>
                     <div class="container patients">
                         <h1>Pacientes</h1>
-                        <div class="container_b patients">
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_0</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_1</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_2</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_3</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_4</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_5</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_6</h3>
-                            <h3 class="patient" onclick="patient_click(event)">placeholder_7</h3>
+                        <div id="patient_list" class="container_b patients">
                         </div>
+                    </div>
+                    <div class="container login">
+                        <h3>LOGIN</h3>
+                        <div class="container_b" id="login">
+                            <form class="login_form" action="">
+                                <div class="container username">
+                                    <label for="username">usu&aacute;rio:</label>
+                                    <input name="username" type="text" placeholder="nome de usu&aacute;rio">
+                                </div>
+                                <div class="container password">
+                                    <label for="password">senha:</label>
+                                    <input name="password" type="password" placeholder="********">
+                                </div>
+                                <div><button type="submit" id="login_button">fazer login / registrar-se</button></div>
+                            </form>
+                        </div>
+                        <p id="warning" color="red">N&atilde;O USE SUA SENHA REAL</p>
                     </div>
                 </div>
             </div>
@@ -113,10 +124,10 @@
                     <div class="container login">
                         <h3>LOGIN</h3>
                         <div class="container_b" id="login">
-                            <form id="login_form" action="">
+                            <form class="login_form" action="">
                                 <div class="container username">
                                     <label for="username">usu&aacute;rio:</label>
-                                    <input name="username" type="text" placeholder="nome de usuário">
+                                    <input name="username" type="text" placeholder="nome de usu&aacute;rio">
                                 </div>
                                 <div class="container password">
                                     <label for="password">senha:</label>

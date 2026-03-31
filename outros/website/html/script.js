@@ -13,17 +13,6 @@ function open_tab(event,tab) {
     button.className += ' active'
 }
 
-function patient_click(event) {
-    let i
-    let selected_patient = event.currentTarget
-    let patients = document.getElementsByClassName('patient')
-    for (i=0; (i < patients.length); i++) {
-        patients[i].className = patients[i].className.replace(' active','')
-    }
-    selected_patient.className += ' active'
-    console.log(document.getElementsByClassName('tab_b')[0].style)
-}
-
 function temperature(type,index) {
     const dummy = ['K','F','C']
     switch (index) {
@@ -121,15 +110,20 @@ function message_handler(data) {
                 break
             case 'error':
                 message('ERRO!',' server','server')
+                break
+            case 'patient_show':
+                patient_view(data.patient)
+                break
+            case 'patient_list':
+                patient_list(data)
+                break
             default:
                 break
         }
 }
 
 function login() {
-    globalThis.socket = new WebSocket("ws://192.168.1.4:52007")
-
-    console.log(globalThis.user)
+    globalThis.socket = new WebSocket("ws://10.144.36.88:52007")
     globalThis.socket.onopen = function () {
         globalThis.socket.send(JSON.stringify(
             {
@@ -151,7 +145,7 @@ function login() {
 }
 
 function login_submission_handler(event) {
-    event.preventDefault()
+    event.preventDefault();
     const data = new FormData(event.target)
     globalThis.user = {
         'name' : data.get('username'),
@@ -159,6 +153,97 @@ function login_submission_handler(event) {
     }
 
     login()
+}
+
+function patient_view(patient) {
+    const form = document.getElementById('medic_form')
+    form.name.value      = patient.name
+    form.birthdate.value = patient.birthdate
+    form.sex.value       = patient.sex
+    form.diagnosis.value = patient.diagnosis
+    form.state.value     = patient.state
+    form.treatment.value = patient.treatment
+    form.release.value   = patient.release
+}
+
+function patient_click(event) {
+    let i
+    let selected_patient = event.currentTarget
+    let patients = document.getElementsByClassName('patient')
+    for (i=0; (i < patients.length); i++) {
+        patients[i].className = patients[i].className.replace(' active','')
+    }
+    selected_patient.className += ' active'
+    if (
+        globalThis.user.name &&
+        globalThis.user.password &&
+        globalThis.socket.readyState == WebSocket.OPEN
+    ) {
+        globalThis.socket.send(JSON.stringify(
+            {
+                'type' : 'get_patient',
+                'patient' : selected_patient.innerText,
+                'user' : globalThis.user
+            }
+        ))
+    }
+}
+
+function patient_save() {
+    const form = document.getElementById('medic_form')
+    const patient_data = {
+        'name'     : form.name.value,
+        'birthdate': form.birthdate.value,
+        'sex'      : form.sex.value,
+        'diagnosis': form.diagnosis.value,
+        'state'    : form.state.value,
+        'treatment': form.treatment.value,
+        'release'  : form.release.value
+    }
+    if (
+        globalThis.user.name &&
+        globalThis.user.password &&
+        globalThis.socket.readyState == WebSocket.OPEN
+    ) {
+        globalThis.socket.send(JSON.stringify(
+            {
+                'type' : 'save_patient',
+                'patient' : form.name.value,
+                'data' : patient_data,
+                'user' : globalThis.user
+            }
+        ))
+    }
+}
+
+function patient_list(data) {
+    const patient_list = document.getElementById('patient_list')
+    const patients = document.getElementsByClassName('patient')
+
+    for (let patient of patients) {
+        patient_list.removeChild(patient)
+    }
+    console.log(data)
+    console.log(data.list)
+    for (let patient of data.list) {
+        let new_patient = document.createElement('h3')
+
+        new_patient.className = 'patient'
+        new_patient.onclick = patient_click
+        new_patient.innerText = patient
+
+        patient_list.appendChild(new_patient)
+    }
+}
+function patient_new() {
+    const form = document.getElementById('medic_form')
+    form.name.value      = ""
+    form.birthdate.value = ""
+    form.sex.value       = ""
+    form.diagnosis.value = ""
+    form.state.value     = ""
+    form.treatment.value = ""
+    form.release.value   = ""
 }
 
 function main() {
@@ -184,11 +269,13 @@ function main() {
     globalThis.user = {'name' : null,'password' : null}
 
     globalThis.socket_tab = document.getElementById('socket_tab')
-    globalThis.form = document.getElementById('login_form');
+    globalThis.forms = document.getElementsByClassName('login_form');
 
     document.getElementById('default').click()
 
-    form.addEventListener('submit',login_submission_handler)
+    for (let form of globalThis.forms) {
+        form.addEventListener('submit',login_submission_handler)
+    }
 
     document.addEventListener('keydown', function (event) {
         if (event.key == 'Enter') {
