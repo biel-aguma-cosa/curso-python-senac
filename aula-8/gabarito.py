@@ -12,7 +12,7 @@ sla = {
     False: 'ERRADA'
 }
 
-bab = lambda x=answers[i], y=GABARITO[i]: f' -> {sla[x==y]}\n'
+bab = lambda x, y: f' -> {sla[x==y]}\n'
 
 os.system('cls')
 print(f'Acertos: {acertos}')
