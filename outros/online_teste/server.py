@@ -29,11 +29,13 @@ def _data(**kwargs):
     return kwargs
 def cook(arg=None,**kwargs):
     if arg:
-        return json.dumps(arg).encode() + b'\n'
+        data = json.dumps(arg)+'\n'
+        return data.encode()
     else:
-        return json.dumps(kwargs).encode() + b'\n'
+        data = json.dumps(arg)+'\n'
+        return data.encode()
 def uncook(data):
-    return json.loads(data.decode().strip())
+    return json.loads(data.decode())
 
 def cmd():
     global idk, running
@@ -84,7 +86,7 @@ def physics():
             broadcast(data)
         dt = time.time() - t0
 
-def valid_colors(client):
+def valid_colors(client=socket.socket):
     invalids = []
     check = players.copy()
     for player in check:
@@ -93,15 +95,15 @@ def valid_colors(client):
     client.send(cook(data))
 
 def move(address,data):
-    #try:
+    try:
         players[address]['dir'] = data['dir']
-    #except:
+    except:
         print(':(')
 
 def shoot(address,data):
     pass
 
-def enter_game(address,data):
+def enter_game(client,address,data):
     invalids = []
     check = players.copy()
     for player in check:
@@ -116,40 +118,44 @@ def enter_game(address,data):
             'color'   : data['color'],
             'friction': 0.8
         }
+    client.send(cook(type='enter',data=data['color']))
+    
 
 def handler(client,address):
     print(f'[NEW CLIENT] {address}')
+    print(type(client))
     clients.append(client)
     buffer = ''
     while running:
-        #try:
+        try:
             thread = None
-            raw_data = client.recv(1024).decode().strip()
+            raw_data = client.recv(1024).decode()
             buffer += raw_data
             while '\n' in buffer:
                 string_data, buffer = buffer.split('\n',1)
                 if string_data:
                     data = json.loads(string_data)
-                    print(f'[COMMAND: {data['type']}] {address}')
+                    if data['type'] != 'move':
+                        print(f'[COMMAND: {data['type']}] {address}')
                     match data['type']:
                         case 'valid':
-                            thread = threading.Thread(target=valid_colors,args=[client])
+                            thread = threading.Thread(target=valid_colors,args=[client])    
                         case 'move':
-                            thread = threading.Thread(target=move,args=[address,data])
+                            thread = threading.Thread(target=move,args=[address,data])      
                         case 'shoot':
-                            thread = threading.Thread(target=shoot,args=[address,data])
+                            thread = threading.Thread(target=shoot,args=[address,data])     
                         case 'enter':
-                            thread = threading.Thread(target=enter_game,args=[address,data])
+                            thread = threading.Thread(target=enter_game,args=[client,address,data])
                         case _:
                             print('[NULL DATA]')
                     thread.start() if thread else print(end='')
-        #except:
-        #    try: clients.remove(client)
-        #    except: pass
-        #    try: del players[address]
-        #    except: pass
-        #    print(f'[PLAYER DISCONECTED] {address}')
-        #    return
+        except:
+            try: clients.remove(client)
+            except: pass
+            try: del players[address]
+            except: pass
+            print(f'[PLAYER DISCONECTED] {address}')
+            return
             
 server.listen(8)
 

@@ -5,18 +5,20 @@ client.connect(('localhost',52007))
 
 def cook(arg=None,**kwargs):
     if arg:
-        return json.dumps(arg).encode() + b'\n'
+        data = json.dumps(arg   )+'\n'
     else:
-        return json.dumps(kwargs).encode() + b'\n'
+        data = json.dumps(kwargs)+'\n'
+    return data.encode()
 def send(arg=None,**kwargs):
     if arg:
-        data = json.dumps(arg).encode() + b'\n'
+        data = json.dumps(arg   )+'\n'
     else:
-        data = json.dumps(kwargs).encode() + b'\n'
-    client.send(data)
+        data = json.dumps(kwargs)+'\n'
+    client.send(data.encode())
 def uncook(data):
-    return json.loads(data.decode().strip())
+    return json.loads(data.decode())
 
+DIRECTION = [0,0]
 SCREEN = (600,400)
 INDEX = 0
 OFFSET = [0,0]
@@ -42,12 +44,12 @@ for color in beep['colors']:
     del colors[color]
 for color in colors:
     print(f' - {colors[color]} | index: {color}')
-color = input('select color index: ')
-send(type='enter',color=color)
+COLOR = input('select color index: ')
+send(type='enter',color=COLOR)
 
 running = True
 clock = pygame.Clock()
-dt = 0
+dt = 0 
 
 pygame.init()
 screen = pygame.display.set_mode(SCREEN)
@@ -56,31 +58,40 @@ players = []
 #(list[player]['pos'],list[player]['angle'],list[player]['color']
 
 def handler():
-    global client, running
+    global client, running, COLOR, INDEX, players
+    buffer = ''
     while running:
-        raw_data = client.recv(1024).decode().strip()
+        raw_data = client.recv(1024).decode()
         buffer += raw_data
         while '\n' in buffer:
             string_data, buffer = buffer.split('\n',1)
             if string_data:
                 data = json.loads(string_data)
-                print(data)
-                match data['type']:
-                    case 'players':
-                        if COLOR:
-                            players = data['data']
-                            for i, player in enumerate(players):
-                                if player[2] == COLOR:
-                                    INDEX = i
-                    case _:
-                        pass
+                if data:
+                    match data['type']:
+                        case 'players':
+                            if COLOR:
+                                players = data['data']
+                                for i, player in enumerate(players):
+                                    if player[2] == COLOR:
+                                        INDEX = i
+                        case _:
+                            pass
+def direction():
+    global DIRECTION, running
+    while running:
+        send(type='move',dir=DIRECTION)
+        pygame.time.delay(int(1000/15))
 
 key_translate = {
     True  : {True: 0,False:-1},
     False : {True: 1,False: 0}
 }
 
-threading.Thread(target=handler).start()
+handler_thread   = threading.Thread(target=handler  )
+direction_thread = threading.Thread(target=direction)
+handler_thread  .start()
+direction_thread.start()
 
 while running:
     key = pygame.key.get_pressed()
@@ -90,12 +101,17 @@ while running:
     screen.fill(pygame.color.Color(70,30,30))
 
 
-    direction = [key_translate[key[pygame.K_a]][key[pygame.K_d]],key_translate[key[pygame.K_w]][key[pygame.K_s]]]
-    send(type='move',dir=direction)
+    DIRECTION = [key_translate[key[pygame.K_a]][key[pygame.K_d]],key_translate[key[pygame.K_w]][key[pygame.K_s]]]
 
-
-    for player in players:
-        pygame.draw.rect(screen,player[2],pygame.Rect(player[0][0],player[0][1],16,16))
+    for player in players[:]:
+        try:
+            pygame.draw.rect(screen,color=colors[player[2]],rect=pygame.Rect(player[0][0],player[0][1],16,16))
+        except:
+            print(player)
     
     pygame.display.flip()
     dt = clock.tick(30)/1000
+
+handler_thread  .join()
+direction_thread.join()
+print('Client Ended')

@@ -1,6 +1,6 @@
 import tkinter, tkinter.font, tkinter.colorchooser
 
-tkinter.colorchooser.askcolor()
+print(tkinter.colorchooser.askcolor())
 
 root = tkinter.Tk()
 font=tkinter.font.nametofont('system')
@@ -32,8 +32,6 @@ X = Button('X')
 
 screen.grid(row=0,column=0,columnspan=3)
 
-for name in tkinter.font.names():
-    print(name)
 
 for x,_list in enumerate(buttons):
     for y, button in enumerate(_list):
