@@ -1,7 +1,7 @@
 import pygame, socket, json, threading
 
 client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-client.connect(('localhost',52007))
+client.connect(('10.144.36.139',52007))
 
 def cook(arg=None,**kwargs):
     if arg:
@@ -18,12 +18,12 @@ def send(arg=None,**kwargs):
 def uncook(data):
     return json.loads(data.decode())
 
-DIRECTION = [0,0]
+direction = [0,0]
 SCREEN = (600,400)
-INDEX = 0
-OFFSET = [0,0]
+index = 0
+offset = [0,0]
 COLOR = None
-SELF = None
+self = None
 
 colors = {
     '000' : 'black',
@@ -58,7 +58,7 @@ players = []
 #(list[player]['pos'],list[player]['angle'],list[player]['color']
 
 def handler():
-    global client, running, COLOR, INDEX, players
+    global client, running, COLOR, index, players
     buffer = ''
     while running:
         raw_data = client.recv(1024).decode()
@@ -74,13 +74,13 @@ def handler():
                                 players = data['data']
                                 for i, player in enumerate(players):
                                     if player[2] == COLOR:
-                                        INDEX = i
+                                        index = i
                         case _:
                             pass
-def direction():
-    global DIRECTION, running
+def send_direction():
+    global direction, running
     while running:
-        send(type='move',dir=DIRECTION)
+        send(type='move',dir=direction)
         pygame.time.delay(int(1000/15))
 
 key_translate = {
@@ -89,7 +89,7 @@ key_translate = {
 }
 
 handler_thread   = threading.Thread(target=handler  )
-direction_thread = threading.Thread(target=direction)
+direction_thread = threading.Thread(target=send_direction)
 handler_thread  .start()
 direction_thread.start()
 
@@ -101,7 +101,7 @@ while running:
     screen.fill(pygame.color.Color(70,30,30))
 
 
-    DIRECTION = [key_translate[key[pygame.K_a]][key[pygame.K_d]],key_translate[key[pygame.K_w]][key[pygame.K_s]]]
+    direction = [key_translate[key[pygame.K_a]][key[pygame.K_d]],key_translate[key[pygame.K_w]][key[pygame.K_s]]]
 
     for player in players[:]:
         try:
@@ -111,7 +111,6 @@ while running:
     
     pygame.display.flip()
     dt = clock.tick(30)/1000
-
 handler_thread  .join()
 direction_thread.join()
 print('Client Ended')

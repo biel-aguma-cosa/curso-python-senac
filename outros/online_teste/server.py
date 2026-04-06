@@ -2,7 +2,7 @@ import socket, pygame, threading, json, time
 import numpy as np
 
 server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server.bind(('localhost',52007))
+server.bind(('10.144.36.139',52007))
 
 clients = []
 objects = []
@@ -16,6 +16,17 @@ colors = {
     '101' : 'magenta',
     '110' : 'yellow',
     '111' : 'white'
+}
+
+positions = {
+    '000' : [10,10],
+    '001' : [0,0],
+    '010' : [0,0],
+    '011' : [0,0],
+    '100' : [0,0],
+    '101' : [0,0],
+    '110' : [0,0],
+    '111' : [40,40]
 }
 
 players = {
@@ -47,7 +58,7 @@ def cmd():
 def broadcast(data):
     if clients != []:
         for client in clients.copy():
-            print(f'[BROADCAST] {data}')
+            #print(f'[BROADCAST] {data}')
             client.send(cook(arg=data))
 
 def physics():
@@ -107,11 +118,11 @@ def enter_game(client,address,data):
     invalids = []
     check = players.copy()
     for player in check:
-        invalids.append(check['player']['color'])
+        invalids.append(check[player]['color'])
     if data['color'] in colors and not (data['color'] in invalids):
         players[address] = {
             'rect'    : pygame.rect.Rect(0,0,16,16),
-            'pos'     : np.array([0,0],float),
+            'pos'     : np.array(positions[data['color']],float),
             'spd'     : np.array([0,0],float),
             'dir'     : (0,0),
             'angle'   : 0,
