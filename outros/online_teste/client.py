@@ -1,4 +1,4 @@
-import pygame, socket, json, threading
+import pygame, socket, json, threading, copy
 
 client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 client.connect(('10.144.36.139',52007))
@@ -69,12 +69,13 @@ def handler():
                 data = json.loads(string_data)
                 if data:
                     match data['type']:
-                        case 'players':
+                        case 'physics':
                             if COLOR:
-                                players = data['data']
-                                for i, player in enumerate(players):
-                                    if player[2] == COLOR:
-                                        index = i
+                                with lock:
+                                    players = data['data']
+                                    for i, player in enumerate(players):
+                                        if player[2] == COLOR:
+                                            index = i
                         case _:
                             pass
 def send_direction():
@@ -88,6 +89,7 @@ key_translate = {
     False : {True: 1,False: 0}
 }
 
+lock = threading.Lock()
 handler_thread   = threading.Thread(target=handler  )
 direction_thread = threading.Thread(target=send_direction)
 handler_thread  .start()
@@ -103,7 +105,10 @@ while running:
 
     direction = [key_translate[key[pygame.K_a]][key[pygame.K_d]],key_translate[key[pygame.K_w]][key[pygame.K_s]]]
 
-    for player in players[:]:
+    with lock:
+        current_players = players.copy()
+
+    for player in current_players:
         try:
             pygame.draw.rect(screen,color=colors[player[2]],rect=pygame.Rect(player[0][0],player[0][1],16,16))
         except:

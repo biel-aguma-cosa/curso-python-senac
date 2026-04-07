@@ -20,7 +20,7 @@ colors = {
 
 positions = {
     '000' : [10,10],
-    '001' : [0,0],
+    '001' : [40,10],
     '010' : [0,0],
     '011' : [0,0],
     '100' : [0,0],
@@ -58,7 +58,7 @@ def cmd():
 def broadcast(data):
     if clients != []:
         for client in clients.copy():
-            #print(f'[BROADCAST] {data}')
+            print(len(players))
             client.send(cook(arg=data))
 
 def physics():
@@ -69,6 +69,7 @@ def physics():
     while running:
         t0 = time.time()
         player_list = players.copy()
+        object_list = objects.copy()
         client_list = clients.copy()
 
         t += dt
@@ -85,15 +86,29 @@ def physics():
                 player['spd'] -= step*player['spd']/player['friction']
                 player['pos'] += player['spd']
                 player['rect'].topleft = player['pos']
+                for object in object_list:
+                    if player['rect'].colliderect(object['rect']):
+                        player['pos'] -= player['spd']
+                        player['rect'].topleft = player['pos']
+                        player['spd'] = -player['spd']/4
                 for p2 in player_list:
                     if index != p2 and player['rect'].colliderect(player_list[p2]['rect']):
                         player['pos'] -= player['spd']
                         player['rect'].topleft = player['pos']
-                        player['spd'] = -player['spd']
+                        player_list[p2]['spd'] += player['spd']/4
+                        player['spd'] = -player['spd']/4
             t -= step
-        data = _data(type='players',data=[])
-        for player in player_list:
-            data['data'].append((player_list[player]['rect'].topleft,player_list[player]['angle'],player_list[player]['color']))
+        data = _data(type='physics',players=[],objects=[])
+        ready= False
+        if len(player_list):
+            for player in player_list:
+                data['players'].append((player_list[player]['rect'].topleft,player_list[player]['angle'],player_list[player]['color']))
+            ready = True
+        if len(object_list) and object_list != objects:
+            for object in object_list:
+                data['objects'].append((object['rect'].topleft,object['color']))
+            ready = True
+        if ready:
             broadcast(data)
         dt = time.time() - t0
 
@@ -127,7 +142,7 @@ def enter_game(client,address,data):
             'dir'     : (0,0),
             'angle'   : 0,
             'color'   : data['color'],
-            'friction': 0.8
+            'friction': 0.9
         }
     client.send(cook(type='enter',data=data['color']))
     
